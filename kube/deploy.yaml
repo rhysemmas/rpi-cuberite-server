@@ -1,0 +1,54 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cuberite
+spec:
+  selector:              
+    matchLabels:                       
+      app: cuberite
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: cuberite
+    spec:
+      containers:
+      - image: rhysemmas/cuberite:armv7
+        imagePullPolicy: Always
+        name: server
+        stdin: true
+        tty: true
+        ports:
+        - name: minecraft
+          containerPort: 25565
+          protocol: TCP
+        - name: web-admin
+          containerPort: 8080
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /app/world
+          name: world-pd
+        - mountPath: /app/world_nether
+          name: world-nether-pd
+        - mountPath: /app/world_the_end
+          name: world-the-end-pd
+      volumes:
+      - name: world-pd
+        hostPath:
+          path: /mnt/world
+          type: Directory
+      - name: world-nether-pd
+        hostPath:
+          path: /mnt/world_nether
+          type: Directory
+      - name: world-the-end-pd
+        hostPath:
+          path: /mnt/world_the_end
+          type: Directory
+      nodeSelector:
+        minecraft: "true"
+      tolerations:
+      - key: minecraft
+        operator: Exists
+        effect: NoSchedule
