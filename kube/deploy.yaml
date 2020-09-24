@@ -17,6 +17,10 @@ spec:
       - image: rhysemmas/cuberite:armv7
         imagePullPolicy: Always
         name: server
+        resources:
+          requests:
+            memory: 256Mi
+            cpu: 1
         stdin: true
         tty: true
         ports:
