@@ -19,8 +19,8 @@ spec:
         name: server
         resources:
           requests:
-            memory: 256Mi
-            cpu: 1
+            memory: 512Mi
+            cpu: 2
         stdin: true
         tty: true
         ports:
@@ -31,6 +31,10 @@ spec:
           containerPort: 8080
           protocol: TCP
         volumeMounts:
+        - mountPath: /app/players
+          name: players-pd
+        - mountPath: /app/whitelist.sqlite
+          name: allowlist-pd
         - mountPath: /app/world
           name: world-pd
         - mountPath: /app/world_nether
@@ -38,6 +42,14 @@ spec:
         - mountPath: /app/world_the_end
           name: world-the-end-pd
       volumes:
+      - name: players-pd
+        hostPath:
+          path: /mnt/players
+          type: DirectoryOrCreate
+      - name: allowlist-pd
+        hostPath:
+          path: /mnt/whitelist.sqlite
+          type: FileOrCreate
       - name: world-pd
         hostPath:
           path: /mnt/world
