@@ -26,7 +26,13 @@ kubectl apply -f ./kube/
 
 The manifest files in the [kube/](./kube) directory will deploy Cuberite to the current namespace, the [deployment](./kube/deploy.yaml) sets up hostPath volumes for the different worlds (world, world_nether, world_the_end) - these paths will need to exist for the hostPaths to be setup. I have a USB mounted at `/mnt` on the Pi where Cuberite runs for storing the world saves. The hostPath mounts are therefore relative to `/mnt` and will need updating to a path of your choice.
 
-A single Cuberite pod will be deployed to a node labelled with `minecraft=true`, the deploy has the following toleration:
+A single Cuberite pod will be deployed, the deployment specifies a nodeSelector which looks for the label: `minecraft=true` - to add this label to a node, run the following:
+
+```
+kubectl label node <node-name> minecraft=true
+```
+
+The deployment also has the following toleration:
 
 ```
       tolerations:
