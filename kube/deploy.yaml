@@ -31,8 +31,6 @@ spec:
           containerPort: 8080
           protocol: TCP
         volumeMounts:
-        - mountPath: /app/settings.ini
-          name: settings-pd
         - mountPath: /app/players
           name: players-pd
         - mountPath: /app/whitelist.sqlite
@@ -44,10 +42,6 @@ spec:
         - mountPath: /app/world_the_end
           name: world-the-end-pd
       volumes:
-      - name: settings-pd
-        hostPath:
-          path: /mnt/settings.ini
-          type: FileOrCreate
       - name: players-pd
         hostPath:
           path: /mnt/players
