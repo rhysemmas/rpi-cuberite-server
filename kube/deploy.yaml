@@ -14,7 +14,7 @@ spec:
         app: cuberite
     spec:
       containers:
-      - image: rhysemmas/cuberite:armv7-2
+      - image: rhysemmas/cuberite:armv7-3
         imagePullPolicy: Always
         name: server
         resources:
