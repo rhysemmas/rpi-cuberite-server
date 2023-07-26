@@ -1,30 +1,41 @@
-FROM arm32v7/debian:stable-slim
-#arm Cuberite is dynamically linked to some armhf deps which we need in the container 
+FROM arm32v7/debian:latest as builder
 
-ENV WEB_ADMIN_USER=admin
-ENV WEB_ADMIN_PASS=password
+WORKDIR /build
 
 RUN apt-get update && \
-    apt-get install -y curl rsync git
+    apt-get install -y git gcc g++ make cmake
 
-WORKDIR /app
-RUN curl https://raw.githubusercontent.com/cuberite/cuberite/master/easyinstall.sh --output install.sh
-RUN bash install.sh
+RUN git clone --recursive https://github.com/cuberite/cuberite.git
 
-COPY ./config/* /app/
+WORKDIR /build/cuberite
+
+RUN git reset 8a763d3bedac3eabee9c1ca022be53038ba3fc54 --hard
+
+WORKDIR /build/cuberite/Release
+
+RUN cmake -DCMAKE_BUILD_TYPE=RELEASE .. && \
+    make -j`nproc`
 
 # Install Plugins here (need to be enabled in settings.ini)
-WORKDIR /app/Plugins
+WORKDIR /build/cuberite/Release/Server/Plugins
+
 RUN git clone https://github.com/bennasar99/ClearLagg.git
 
-WORKDIR /app
-RUN sed -i s/WEB_ADMIN_USER/$WEB_ADMIN_USER/g webadmin.ini && \
-    sed -i s/WEB_ADMIN_PASS/$WEB_ADMIN_PASS/g webadmin.ini
 
-RUN useradd -ms /bin/bash cuberite
-RUN chown -R cuberite:cuberite /app
+
+FROM arm32v7/debian:stable-slim
+
+WORKDIR /app
+
+COPY --from=builder /build/cuberite/Release/Server/* .
+
+COPY ./config/* .
+
+RUN useradd -ms /bin/bash cuberite && \
+    chown -R cuberite:cuberite /app
+
 USER cuberite
 
-CMD /app/Cuberite 
+CMD ./Cuberite
 
 EXPOSE 25565 8080
