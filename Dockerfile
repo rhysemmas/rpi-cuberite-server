@@ -1,4 +1,4 @@
-FROM arm32v7/debian:latest as builder
+FROM hilschernetpi/netpi-raspbian:latest as builder
 
 WORKDIR /build
 
@@ -23,11 +23,13 @@ RUN git clone https://github.com/bennasar99/ClearLagg.git
 
 
 
-FROM arm32v7/debian:stable-slim
+FROM  hilschernetpi/netpi-raspbian:latest
 
 WORKDIR /app
 
-COPY --from=builder /build/cuberite/Release/Server/* .
+COPY --from=builder /build/cuberite/Server/ .
+COPY --from=builder /build/cuberite/Release/Server/lua .
+COPY --from=builder /build/cuberite/Release/Server/Cuberite .
 
 COPY ./config/* .
 
