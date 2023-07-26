@@ -1,4 +1,4 @@
-FROM arm32v7/debian:buster-slim
+FROM arm32v7/debian:stable-slim
 #arm Cuberite is dynamically linked to some armhf deps which we need in the container 
 
 ENV WEB_ADMIN_USER=admin
@@ -8,7 +8,8 @@ RUN apt-get update && \
     apt-get install -y curl rsync git
 
 WORKDIR /app
-RUN curl -sSfL https://download.cuberite.org | sh
+RUN curl https://raw.githubusercontent.com/cuberite/cuberite/master/easyinstall.sh --output install.sh
+RUN bash install.sh
 
 COPY ./config/* /app/
 
@@ -24,6 +25,6 @@ RUN useradd -ms /bin/bash cuberite
 RUN chown -R cuberite:cuberite /app
 USER cuberite
 
-CMD ./Cuberite 
+CMD /app/Cuberite 
 
 EXPOSE 25565 8080
