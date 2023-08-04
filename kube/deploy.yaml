@@ -68,3 +68,5 @@ spec:
       - key: minecraft
         operator: Exists
         effect: NoSchedule
+      - key: CriticalAddonsOnly # k3s workaround - node is tainted with this key which the svclb also tolerates
+        operator: Exists
